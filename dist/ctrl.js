@@ -412,10 +412,10 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             // if that is blank, try to get it from our row
             if (typeof tmpPanelHeight === 'undefined') {
               // get from the row instead
-              tmpPanelHeight = this.row.height;
+              tmpPanelHeight = this.row && this.row.height;
               // default to 250px if that was undefined also
               if (typeof tmpPanelHeight === 'undefined') {
-                tmpPanelHeight = 250;
+                tmpPanelHeight = this.containerHeight || this.height || 250;
               }
             } else {
               // convert to numeric value
