@@ -1,5 +1,6 @@
 grafana:
-  image: grafana/grafana
+  # image: grafana/grafana
+  build: ./
   ports:
     - "3000:3000"
   volumes:
