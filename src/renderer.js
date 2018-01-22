@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import $ from 'jquery';
 import kbn from 'app/core/utils/kbn';
 import moment from 'moment';
@@ -282,10 +283,13 @@ export class DatatableRenderer {
     if (this.panel.emptyData) {
       return;
     }
-    var columns = [];
-    var columnDefs = [];
-    var _this = this;
-    var rowNumberOffset = 0;
+    var customColumns = !!this.panel.columns.length,
+        srcColumns = customColumns ? this.panel.columns : this.table.columns,
+        columns = [],
+        columnDefs = [],
+        _this = this,
+        rowNumberOffset = 0;
+    
     if (this.panel.rowNumbersEnabled) {
       rowNumberOffset = 1;
       columns.push({
@@ -300,21 +304,25 @@ export class DatatableRenderer {
             "width": "1%",
         });
     }
-    for (let i = 0; i < this.table.columns.length; i++) {
-      var columnAlias = this.getColumnAlias(this.table.columns[i].text);
-      var columnWidthHint = this.getColumnWidthHint(this.table.columns[i].text);
+    for (let i = 0; i < srcColumns.length; i++) {
+      var columnAlias = this.getColumnAlias(srcColumns[i].text);
+      var columnWidthHint = this.getColumnWidthHint(srcColumns[i].text);
       // NOTE: the width below is a "hint" and will be overridden as needed, this lets most tables show timestamps
       // with full width
       /* jshint loopfunc: true */
       columns.push({
         title: columnAlias,
-        type: this.table.columns[i].type,
-        width: columnWidthHint
+        type: srcColumns[i].type,
+        width: columnWidthHint,
+        index: _.findIndex(this.table.columns, {text:srcColumns[i].text})
       });
         columnDefs.push(
           {
             "targets": i + rowNumberOffset,
             "createdCell": function (td, cellData, rowData, row, col) {
+              // if (customColumns) {
+              //   cellData = rowData[columns[col].index];
+              // }
               // hidden columns have null data
               if (cellData === null) return;
               // set the fontsize for the cell
@@ -324,7 +332,7 @@ export class DatatableRenderer {
               if (_this.panel.rowNumbersEnabled) {
                 actualColumn -= 1;
               }
-              if (_this.table.columns[actualColumn].type !== undefined) return;
+              if (srcColumns[actualColumn].type !== undefined) return;
               // for coloring rows, get the "worst" threshold
               var rowColor = null;
               var color = null;
@@ -339,9 +347,9 @@ export class DatatableRenderer {
                 rowColor = _this.colorState.row;
                 // this should be configurable...
                 color = 'white';
-                for (let columnNumber = 0; columnNumber < _this.table.columns.length; columnNumber++) {
+                for (let columnNumber = 0; columnNumber < srcColumns.length; columnNumber++) {
                   // only columns of type undefined are checked
-                  if (_this.table.columns[columnNumber].type === undefined) {
+                  if (srcColumns[columnNumber].type === undefined) {
                     rowColorData = _this.getCellColors(_this.colorState, columnNumber, rowData[columnNumber + rowNumberOffset]);
                     if (rowColorData.bgColorIndex !== null) {
                       if (rowColorData.bgColorIndex > rowColorIndex) {
@@ -366,9 +374,9 @@ export class DatatableRenderer {
                 rowColor = _this.colorState.rowcolumn;
                 // this should be configurable...
                 color = 'white';
-                for (let columnNumber = 0; columnNumber < _this.table.columns.length; columnNumber++) {
+                for (let columnNumber = 0; columnNumber < srcColumns.length; columnNumber++) {
                   // only columns of type undefined are checked
-                  if (_this.table.columns[columnNumber].type === undefined) {
+                  if (srcColumns[columnNumber].type === undefined) {
                     rowColorData = _this.getCellColors(_this.colorState, columnNumber, rowData[columnNumber + rowNumberOffset]);
                     if (rowColorData.bgColorIndex !== null) {
                       if (rowColorData.bgColorIndex > rowColorIndex) {
@@ -380,7 +388,7 @@ export class DatatableRenderer {
                 }
                 // style the rowNumber and Timestamp column
                 // the cell colors will be determined in the next phase
-                if (_this.table.columns[0].type !== undefined) {
+                if (srcColumns[0].type !== undefined) {
                   var children = $(td.parentNode).children();
                   var aChild = children[0];
                   $(aChild).css('color', color);

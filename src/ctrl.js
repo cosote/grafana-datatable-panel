@@ -370,7 +370,17 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
     // automatically correct transform mode based on data
     if (this.dataRaw && this.dataRaw.length) {
       if (this.dataRaw[0].type === 'table') {
-        this.panel.transform = 'table';
+        this.panel.transform = 'table';      
+        this.dataRaw.forEach((model, index)=> {
+          model.columns.forEach((column, columnIndex)=> {
+            column.dataIndex = index;
+            column.cellIndex = columnIndex;
+            if (this.dataRaw.length) {
+              column.text = `${index}.${column.text}`;
+            }
+          });
+        });
+      
       } else {
         if (this.dataRaw[0].type === 'docs') {
           this.panel.transform = 'json';
@@ -380,6 +390,7 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
           }
         }
       }
+
     }
     this.render();
   }
@@ -460,6 +471,12 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
   themeChanged() {
     //console.log(this.panel.datatableTheme);
     this.render();
+  }
+
+  groupingChanged() {
+    if (this.dataRaw.every((set)=> set.grouping)) {
+      this.render();
+    }
   }
 
   transformChanged() {

@@ -5,6 +5,48 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
 
   var _, moment, flatten, TimeSeries, TableModel, transformers;
 
+  function extractColumns(data) {
+    return _.flatten(data.map(function (group) {
+      return group.columns;
+    }));
+  }
+
+  function extractRows(data, customColumns, actualColumns) {
+    var rows = [],
+        offset = 0,
+        targetRow;
+
+    if (customColumns.length) {
+      _.forEach(customColumns, function (column, columnIndex) {
+        column = _.find(actualColumns, { text: column.text });
+        _.forEach(data[column.dataIndex].rows, function (row, rowIndex) {
+          var targetRow = rows[rowIndex];
+          if (!targetRow) {
+            targetRow = rows[rowIndex] = [];
+          }
+          targetRow[columnIndex] = row[column.cellIndex];
+        });
+      });
+    } else {
+      _.forEach(data, function (model, modelIndex) {
+        if (modelIndex) {
+          offset += (data[modelIndex - 1].rows[0] || []).length;
+        }
+        _.forEach(model.rows, function (row, rowIndex) {
+          var targetRow = rows[rowIndex];
+          if (!targetRow) {
+            targetRow = rows[rowIndex] = [];
+          }
+          _.forEach(row, function (cell, cellIndex) {
+            targetRow[cellIndex + offset] = cell;
+          });
+        });
+      });
+    }
+
+    return rows;
+  }
+
   function transformDataToTable(data, panel) {
     var model = new TableModel();
 
@@ -14,7 +56,7 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
 
     var transformer = transformers[panel.transform];
     if (!transformer) {
-      throw { message: 'Transformer ' + panel.transformer + ' not found' };
+      throw new Error('Transformer ' + panel.transformer + ' not found');
     }
 
     transformer.transform(data, panel, model);
@@ -159,23 +201,22 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
           if (!data || data.length === 0) {
             return [];
           }
+          if (data.length === 1) {
+            return data[0].columns;
+          } else {
+            return extractColumns(data);
+          }
         },
         transform: function transform(data, panel, model) {
           if (!data || data.length === 0) {
             return;
           }
 
-          if (data[0] === undefined) {
-            throw { message: 'Query result is not in table format, try using another transform.' };
+          if (data[0] === undefined || data[0].type === undefined || data[0].type !== 'table') {
+            throw new Error('Query result is not in table format, try using another transform.');
           }
-          if (data[0].type === undefined) {
-            throw { message: 'Query result is not in table format, try using another transform.' };
-          }
-          if (data[0].type !== 'table') {
-            throw { message: 'Query result is not in table format, try using another transform.' };
-          }
-          model.columns = data[0].columns;
-          model.rows = data[0].rows;
+          model.columns = extractColumns(data);
+          model.rows = extractRows(data, panel.columns, model.columns);
         }
       };
 

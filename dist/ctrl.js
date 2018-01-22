@@ -377,6 +377,8 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         }, {
           key: 'onDataReceived',
           value: function onDataReceived(dataList) {
+            var _this3 = this;
+
             this.dataRaw = dataList;
             this.pageIndex = 0;
 
@@ -384,6 +386,15 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             if (this.dataRaw && this.dataRaw.length) {
               if (this.dataRaw[0].type === 'table') {
                 this.panel.transform = 'table';
+                this.dataRaw.forEach(function (model, index) {
+                  model.columns.forEach(function (column, columnIndex) {
+                    column.dataIndex = index;
+                    column.cellIndex = columnIndex;
+                    if (_this3.dataRaw.length) {
+                      column.text = index + '.' + column.text;
+                    }
+                  });
+                });
               } else {
                 if (this.dataRaw[0].type === 'docs') {
                   this.panel.transform = 'json';
@@ -476,6 +487,12 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             this.render();
           }
         }, {
+          key: 'groupingChanged',
+          value: function groupingChanged() {
+            debugger;
+            this.render();
+          }
+        }, {
           key: 'transformChanged',
           value: function transformChanged() {
             this.panel.columns = [];
@@ -490,14 +507,14 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         }, {
           key: 'getColumnOptions',
           value: function getColumnOptions() {
-            var _this3 = this;
+            var _this4 = this;
 
             if (!this.dataRaw) {
               return this.$q.when([]);
             }
             var columns = this.transformers[this.panel.transform].getColumns(this.dataRaw);
             var segments = _.map(columns, function (c) {
-              return _this3.uiSegmentSrv.newSegment({
+              return _this4.uiSegmentSrv.newSegment({
                 value: c.text
               });
             });

@@ -2,6 +2,15 @@
 	<div class="section gf-form-group">
 		<h5 class="section-heading">Data</h5>
     <div class="gf-form">
+      <label class="gf-form-label width-10">Dataset Grouping</label>
+      <div class="gf-form" ng-repeat="group in ctrl.dataRaw">
+      	<label class="gf-form-label">
+      		<span>Dataset #{{$index + 1}}: </span>
+	        <select class="gf-form-input" ng-model="group.grouping" ng-options="v.text as v.text for (k, v) in group.columns" ng-change="ctrl.groupingChanged()"></select>
+      	</label>
+      </div>
+    </div>
+    <div class="gf-form">
       <label class="gf-form-label width-10">Table Transform</label>
       <div class="gf-form-select-wrapper max-width-15">
         <select class="gf-form-input" ng-model="ctrl.panel.transform" ng-options="k as v.description for (k, v) in ctrl.transformers" ng-change="ctrl.transformChanged()"></select>
