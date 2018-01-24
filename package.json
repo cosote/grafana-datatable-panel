@@ -47,6 +47,8 @@
     "minimatch": "3.0.2",
     "typescript": "^2.5.3"
   },
-  "dependencies": {},
+  "dependencies": {
+    "fast-memoize": "^2.2.8"
+  },
   "homepage": "https://github.com/briangann/grafana-datatable-panel"
 }

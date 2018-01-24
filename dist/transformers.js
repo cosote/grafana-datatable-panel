@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_series2', 'app/core/table_model'], function (_export, _context) {
+System.register(['lodash', 'moment', './libs/fast-memoize/src/index.js', 'app/core/utils/flatten', 'app/core/time_series2', 'app/core/table_model'], function (_export, _context) {
   "use strict";
 
-  var _, moment, flatten, TimeSeries, TableModel, transformers;
+  var _, moment, memoize, flatten, TimeSeries, TableModel, transformers, placeholderRegex, gEval, evalScript;
 
   function extractColumns(data) {
     return _.flatten(data.map(function (group) {
@@ -15,6 +15,9 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
     var rows = [],
         mapping = {},
         columns = panel.columns.length ? panel.columns : model.columns,
+        customColumns = columns.filter(function (column) {
+      return typeof column.script !== 'undefined';
+    }),
         allHaveGrouping = _.every(data, function (dataset) {
       return dataset.grouping;
     });
@@ -32,9 +35,11 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
 
     _.forEach(_.values(mapping), function (row) {
       var outputRow = [];
-      if (panel.excludeUngrouped && Object.keys(row).length !== columns.length) return;
+      if (panel.excludeUngrouped && Object.keys(row).length < columns.length - customColumns.length) return;
       _.forEach(columns, function (column) {
         var value = row[column.text];
+        // if (column.script) value = column.script;
+        if (column.script) value = evalRowScript(row, column.script, model.columns);
         if (typeof value === 'undefined') value = null;
         outputRow.push(value);
       });
@@ -55,6 +60,14 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
         return output;
       });
     });
+  }
+
+  function evalRowScript(row, script, columns) {
+    script = script.replace(placeholderRegex, function (e, name) {
+      var value = row[name] || 0;
+      return typeof value === 'string' ? '"' + value + '"' : value;
+    });
+    return evalScript(script);
   }
 
   function transformDataToTable(data, panel) {
@@ -78,6 +91,8 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
       _ = _lodash.default;
     }, function (_moment) {
       moment = _moment.default;
+    }, function (_libsFastMemoizeSrcIndexJs) {
+      memoize = _libsFastMemoizeSrcIndexJs.default;
     }, function (_appCoreUtilsFlatten) {
       flatten = _appCoreUtilsFlatten.default;
     }, function (_appCoreTime_series) {
@@ -228,7 +243,7 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
           _.forEach(data, function (dataset, index) {
             return dataset.grouping = panel.groupings[index];
           });
-          model.columns = extractColumns(data);
+          model.columns = extractColumns(data).concat(panel.customColumns);
           model.rows = extractRows(data, panel, model);
         }
       };
@@ -292,7 +307,12 @@ System.register(['lodash', 'moment', 'app/core/utils/flatten', 'app/core/time_se
             }
           }
         }
-      };
+      };placeholderRegex = /\{(.+?)\}/g;
+      gEval = eval;
+      evalScript = memoize(function (script) {
+        return gEval(script);
+      });
+
       _export('transformers', transformers);
 
       _export('transformDataToTable', transformDataToTable);

@@ -86,6 +86,7 @@ const panelDefaults = {
   groupings: [],
   columnAliases: [],
   columnWidthHints: [],
+  customColumns: [],
   scroll: false,
   scrollHeight: 'default',
   fontSize: '100%',
@@ -493,7 +494,7 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
     if (!this.dataRaw) {
       return this.$q.when([]);
     }
-    var columns = this.transformers[this.panel.transform].getColumns(this.dataRaw);
+    var columns = this.transformers[this.panel.transform].getColumns(this.dataRaw).concat(this.panel.customColumns);
     var segments = _.map(columns, (c) => this.uiSegmentSrv.newSegment({
       value: c.text
     }));
@@ -501,7 +502,7 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
   }
 
   addColumn() {
-    var columns = transformers[this.panel.transform].getColumns(this.dataRaw);
+    var columns = transformers[this.panel.transform].getColumns(this.dataRaw).concat(this.panel.customColumns);
     var column = _.find(columns, {
       text: this.addColumnSegment.value
     });
@@ -514,6 +515,14 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
     var plusButton = this.uiSegmentSrv.newPlusButton();
     this.addColumnSegment.html = plusButton.html;
     this.addColumnSegment.value = plusButton.value;
+  }
+
+  addCustomColumn() {
+    this.panel.customColumns.push({text:'', script:''});
+  }
+
+  removeCustomColumn(column) {
+    this.panel.customColumns = _.without(this.panel.customColumns, column);
   }
 
   addColumnStyle() {

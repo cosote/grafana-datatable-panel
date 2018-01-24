@@ -1,6 +1,7 @@
 
 import _ from 'lodash';
 import moment from 'moment';
+import memoize from './libs/fast-memoize/src/index.js';
 import flatten from 'app/core/utils/flatten';
 import TimeSeries from 'app/core/time_series2';
 import TableModel from 'app/core/table_model';
@@ -156,7 +157,7 @@ transformers.table = {
       throw new Error('Query result is not in table format, try using another transform.');
     }
     _.forEach(data, (dataset, index)=> dataset.grouping = panel.groupings[index]);
-    model.columns = extractColumns(data);
+    model.columns = extractColumns(data).concat(panel.customColumns);
     model.rows = extractRows(data, panel, model);
   }
 };
@@ -230,6 +231,7 @@ function extractRows(data, panel, model) {
   var rows = [],
       mapping = {},
       columns = panel.columns.length ? panel.columns : model.columns,
+      customColumns = columns.filter((column)=> typeof column.script !== 'undefined'),
       allHaveGrouping = _.every(data, (dataset)=> dataset.grouping);
   
   nameRowCells(data, model.columns);
@@ -246,9 +248,11 @@ function extractRows(data, panel, model) {
 
   _.forEach(_.values(mapping), (row)=> {
     var outputRow = [];
-    if (panel.excludeUngrouped && Object.keys(row).length !== columns.length) return;
+    if (panel.excludeUngrouped && Object.keys(row).length < columns.length - customColumns.length) return;
     _.forEach(columns, (column)=> {
       var value = row[column.text];
+      // if (column.script) value = column.script;
+      if (column.script) value = evalRowScript(row, column.script, model.columns);
       if (typeof value === 'undefined') value = null;
       outputRow.push(value);
     });
@@ -271,6 +275,20 @@ function nameRowCells(data, columns) {
     });
   });
 }
+
+
+var placeholderRegex = /\{(.+?)\}/g;
+var gEval = eval;
+var evalScript = memoize((script)=> gEval(script));
+
+function evalRowScript(row, script, columns) {
+  script = script.replace(placeholderRegex, (e, name)=> {
+    var value = row[name] || 0;
+    return typeof value === 'string' ? '"'+value+'"' : value;
+  });
+  return evalScript(script);
+}
+
 
 function transformDataToTable(data, panel) {
   var model = new TableModel();

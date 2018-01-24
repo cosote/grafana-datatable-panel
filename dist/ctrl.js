@@ -120,6 +120,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         groupings: [],
         columnAliases: [],
         columnWidthHints: [],
+        customColumns: [],
         scroll: false,
         scrollHeight: 'default',
         fontSize: '100%',
@@ -514,7 +515,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             if (!this.dataRaw) {
               return this.$q.when([]);
             }
-            var columns = this.transformers[this.panel.transform].getColumns(this.dataRaw);
+            var columns = this.transformers[this.panel.transform].getColumns(this.dataRaw).concat(this.panel.customColumns);
             var segments = _.map(columns, function (c) {
               return _this4.uiSegmentSrv.newSegment({
                 value: c.text
@@ -525,7 +526,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         }, {
           key: 'addColumn',
           value: function addColumn() {
-            var columns = transformers[this.panel.transform].getColumns(this.dataRaw);
+            var columns = transformers[this.panel.transform].getColumns(this.dataRaw).concat(this.panel.customColumns);
             var column = _.find(columns, {
               text: this.addColumnSegment.value
             });
@@ -538,6 +539,16 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             var plusButton = this.uiSegmentSrv.newPlusButton();
             this.addColumnSegment.html = plusButton.html;
             this.addColumnSegment.value = plusButton.value;
+          }
+        }, {
+          key: 'addCustomColumn',
+          value: function addCustomColumn() {
+            this.panel.customColumns.push({ text: '', script: '' });
+          }
+        }, {
+          key: 'removeCustomColumn',
+          value: function removeCustomColumn(column) {
+            this.panel.customColumns = _.without(this.panel.customColumns, column);
           }
         }, {
           key: 'addColumnStyle',

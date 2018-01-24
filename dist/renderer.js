@@ -160,10 +160,11 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
             if (this.formatters[colIndex]) {
               return this.formatters[colIndex](value);
             }
+            var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
 
             for (var i = 0; i < this.panel.styles.length; i++) {
               var style = this.panel.styles[i];
-              var column = this.table.columns[colIndex];
+              var column = columns[colIndex];
               var regex = kbn.stringToJsRegex(style.pattern);
               if (column.text.match(regex)) {
                 this.formatters[colIndex] = this.createColumnFormatter(style, column);
@@ -178,14 +179,15 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
           key: 'generateFormattedData',
           value: function generateFormattedData(rowData) {
             var formattedRowData = [];
+            var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
             for (var y = 0; y < rowData.length; y++) {
               var row = this.table.rows[y];
               var cellData = [];
               //cellData.push('');
-              for (var i = 0; i < this.table.columns.length; i++) {
+              for (var i = 0; i < columns.length; i++) {
                 var value = this.formatColumnValue(i, row[i]);
                 if (value === undefined) {
-                  this.table.columns[i].hidden = true;
+                  columns[i].hidden = true;
                 }
                 cellData.push(this.formatColumnValue(i, row[i]));
               }
@@ -200,9 +202,10 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
           key: 'getStyleForColumn',
           value: function getStyleForColumn(columnNumber) {
             var colStyle = null;
+            var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
             for (var i = 0; i < this.panel.styles.length; i++) {
               var style = this.panel.styles[i];
-              var column = this.table.columns[columnNumber];
+              var column = columns[columnNumber];
               if (column === undefined) break;
               var regex = kbn.stringToJsRegex(style.pattern);
               if (column.text.match(regex)) {
@@ -327,15 +330,11 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
               columns.push({
                 title: columnAlias,
                 type: srcColumns[i].type,
-                width: columnWidthHint,
-                index: _.findIndex(this.table.columns, { text: srcColumns[i].text })
+                width: columnWidthHint
               });
               columnDefs.push({
                 "targets": i + rowNumberOffset,
                 "createdCell": function createdCell(td, cellData, rowData, row, col) {
-                  // if (customColumns) {
-                  //   cellData = rowData[columns[col].index];
-                  // }
                   // hidden columns have null data
                   if (cellData === null) return;
                   // set the fontsize for the cell
@@ -506,8 +505,8 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
             var newDT = $datatable.DataTable(tableOptions);
 
             // hide columns that are marked hidden
-            for (var _i = 0; _i < this.table.columns.length; _i++) {
-              if (this.table.columns[_i].hidden) {
+            for (var _i = 0; _i < srcColumns.length; _i++) {
+              if (srcColumns[_i].hidden) {
                 newDT.column(_i + rowNumberOffset).visible(false);
               }
             }
@@ -553,17 +552,18 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
           key: 'render_values',
           value: function render_values() {
             var rows = [];
+            var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
 
             for (var y = 0; y < this.table.rows.length; y++) {
               var row = this.table.rows[y];
               var new_row = [];
-              for (var i = 0; i < this.table.columns.length; i++) {
+              for (var i = 0; i < columns.length; i++) {
                 new_row.push(this.formatColumnValue(i, row[i]));
               }
               rows.push(new_row);
             }
             return {
-              columns: this.table.columns,
+              columns: columns,
               rows: rows
             };
           }

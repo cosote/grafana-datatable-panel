@@ -42,6 +42,7 @@
     "datatables.net-select-dt": "^1.2.2",
     "datatables.net-select-jqui": "^1.2.2",
     "datatables.net-select-zf": "^1.2.2",
+    "fast-memoize": "caiogondim/fast-memoize.js",
     "pdfmake": "^0.1.32",
     "jszip": "Stuk/jszip#^3.1.3"
   }

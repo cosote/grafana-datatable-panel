@@ -35,6 +35,40 @@
 
 <div class="editor-row">
 	<div class="section gf-form-group">
+		<h5 class="section-heading">Custom Columns</h5>
+      <div class="gf-form" ng-repeat="column in ctrl.panel.customColumns">
+				<div class="gf-form-inline">
+				<div class="gf-form">
+					<label class="gf-form-label width-10">Column Name</label>
+					<input type="text"
+					  class="gf-form-input width-20"
+						ng-model="column.text"
+						spellcheck="false"
+						ng-model-onblur
+						ng-change="ctrl.optionsChanged()">
+					<label class="gf-form-label width-6">Script</label>
+					<input type="text"
+					  class="gf-form-input width-20"
+						ng-model="column.script"
+						spellcheck="false"
+						ng-model-onblur
+						ng-change="ctrl.optionsChanged()">
+					<label class="gf-form-label">
+						<i class="pointer fa fa-trash" ng-click="ctrl.removeCustomColumn(column)"></i>
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="gf-form-button">
+	    <button class="btn btn-inverse" ng-click="ctrl.addCustomColumn()">
+	      <i class="fa fa-plus"></i>&nbsp;Add Custom Column
+	    </button>
+	  </div>
+	</div>
+</div>
+
+<div class="editor-row">
+	<div class="section gf-form-group">
 		<h5 class="section-heading">Column Aliasing</h5>
       <div class="gf-form" ng-repeat="column in ctrl.panel.columnAliases">
 				<div class="gf-form-inline">

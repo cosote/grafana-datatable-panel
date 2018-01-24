@@ -132,10 +132,11 @@ export class DatatableRenderer {
     if (this.formatters[colIndex]) {
       return this.formatters[colIndex](value);
     }
+    var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
 
     for (let i = 0; i < this.panel.styles.length; i++) {
       let style = this.panel.styles[i];
-      let column = this.table.columns[colIndex];
+      let column = columns[colIndex];
       var regex = kbn.stringToJsRegex(style.pattern);
       if (column.text.match(regex)) {
         this.formatters[colIndex] = this.createColumnFormatter(style, column);
@@ -154,14 +155,15 @@ export class DatatableRenderer {
    */
   generateFormattedData(rowData) {
     let formattedRowData = [];
+    var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
     for (var y = 0; y < rowData.length; y++) {
       let row = this.table.rows[y];
       let cellData = [];
       //cellData.push('');
-      for (var i = 0; i < this.table.columns.length; i++) {
+      for (var i = 0; i < columns.length; i++) {
         let value = this.formatColumnValue(i, row[i]);
         if (value === undefined) {
-          this.table.columns[i].hidden = true;
+          columns[i].hidden = true;
         }
         cellData.push(this.formatColumnValue(i, row[i]));
       }
@@ -175,9 +177,10 @@ export class DatatableRenderer {
 
   getStyleForColumn(columnNumber) {
     let colStyle = null;
+    var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
     for (let i = 0; i < this.panel.styles.length; i++) {
       let style = this.panel.styles[i];
-      let column = this.table.columns[columnNumber];
+      let column = columns[columnNumber];
       if (column === undefined) break;
       var regex = kbn.stringToJsRegex(style.pattern);
       if (column.text.match(regex)) {
@@ -314,15 +317,11 @@ export class DatatableRenderer {
         title: columnAlias,
         type: srcColumns[i].type,
         width: columnWidthHint,
-        index: _.findIndex(this.table.columns, {text:srcColumns[i].text})
       });
         columnDefs.push(
           {
             "targets": i + rowNumberOffset,
             "createdCell": function (td, cellData, rowData, row, col) {
-              // if (customColumns) {
-              //   cellData = rowData[columns[col].index];
-              // }
               // hidden columns have null data
               if (cellData === null) return;
               // set the fontsize for the cell
@@ -497,8 +496,8 @@ export class DatatableRenderer {
     var newDT = $datatable.DataTable(tableOptions);
 
     // hide columns that are marked hidden
-    for (let i = 0; i < this.table.columns.length; i++) {
-      if (this.table.columns[i].hidden) {
+    for (let i = 0; i < srcColumns.length; i++) {
+      if (srcColumns[i].hidden) {
         newDT.column( i + rowNumberOffset ).visible( false );
       }
     }
@@ -543,17 +542,18 @@ export class DatatableRenderer {
 
   render_values() {
       let rows = [];
+      var columns = this.panel.columns.length ? this.panel.columns : this.table.columns;
 
       for (var y = 0; y < this.table.rows.length; y++) {
         let row = this.table.rows[y];
         let new_row = [];
-        for (var i = 0; i < this.table.columns.length; i++) {
+        for (var i = 0; i < columns.length; i++) {
           new_row.push(this.formatColumnValue(i, row[i]));
         }
         rows.push(new_row);
       }
       return {
-          columns: this.table.columns,
+          columns: columns,
           rows: rows,
       };
   }
