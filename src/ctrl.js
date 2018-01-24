@@ -83,6 +83,7 @@ const panelDefaults = {
       }
     ],
   columns: [],
+  groupings: [],
   scroll: false,
   scrollHeight: 'default',
   fontSize: '100%',
@@ -101,6 +102,7 @@ const panelDefaults = {
   showCellBorders: false,
   showRowBorders: true,
   hoverEnabled: true,
+  excludeUngrouped: true,
   orderColumnEnabled: true,
   compactRowsEnabled: false,
   stripedRowsEnabled: true,
@@ -469,14 +471,11 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
   }
 
   themeChanged() {
-    //console.log(this.panel.datatableTheme);
     this.render();
   }
 
-  groupingChanged() {
-    if (this.dataRaw.every((set)=> set.grouping)) {
-      this.render();
-    }
+  optionsChanged() {
+    this.render();
   }
 
   transformChanged() {

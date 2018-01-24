@@ -155,8 +155,9 @@ transformers.table = {
     if (data[0] === undefined || data[0].type === undefined || data[0].type !== 'table') {
       throw new Error('Query result is not in table format, try using another transform.');
     }
+    _.forEach(data, (dataset, index)=> dataset.grouping = panel.groupings[index]);
     model.columns = extractColumns(data);
-    model.rows = extractRows(data, panel.columns, model.columns);
+    model.rows = extractRows(data, panel, model);
   }
 };
 
@@ -225,38 +226,50 @@ function extractColumns(data) {
   return _.flatten(data.map((group)=> group.columns));
 }
 
-function extractRows(data, customColumns, actualColumns) {
-  var rows = [], offset = 0, targetRow;
+function extractRows(data, panel, model) {
+  var rows = [],
+      mapping = {},
+      columns = panel.columns.length ? panel.columns : model.columns,
+      allHaveGrouping = _.every(data, (dataset)=> dataset.grouping);
   
-  if (customColumns.length) {
-    _.forEach(customColumns, (column, columnIndex)=> {
-      column = _.find(actualColumns, {text:column.text});
-      _.forEach(data[column.dataIndex].rows, (row, rowIndex)=> {
-        var targetRow = rows[rowIndex];
-        if (!targetRow) {
-          targetRow = rows[rowIndex] = [];
-        }
-        targetRow[columnIndex] = row[column.cellIndex];
-      });
+  nameRowCells(data, model.columns);
+  
+  _.forEach(data, (dataset)=> {
+    _.forEach(dataset.namedRows, (row, rowIndex)=> {
+      var grouping = allHaveGrouping ? row[dataset.grouping] : rowIndex;
+      if (!mapping[grouping])
+        mapping[grouping] = {};
+      
+      _.assign(mapping[grouping], row);
     });
-  } else {
-    _.forEach(data, (model, modelIndex)=> {
-      if (modelIndex) {
-        offset += (data[modelIndex-1].rows[0] || []).length;
-      }
-      _.forEach(model.rows, (row, rowIndex)=> {
-        var targetRow = rows[rowIndex];
-        if (!targetRow) {
-          targetRow = rows[rowIndex] = [];
-        }
-        _.forEach(row, (cell, cellIndex)=> {
-          targetRow[cellIndex+offset] = cell;
-        });
-      });
+  });
+
+  _.forEach(_.values(mapping), (row)=> {
+    var outputRow = [];
+    if (panel.excludeUngrouped && Object.keys(row).length !== columns.length) return;
+    _.forEach(columns, (column)=> {
+      var value = row[column.text];
+      if (typeof value === 'undefined') value = null;
+      outputRow.push(value);
     });
-  }
+    rows.push(outputRow);
+  });
+
   
   return rows;
+}
+
+function nameRowCells(data, columns) {
+  _.forEach(data, (dataset, dataIndex)=> {
+    dataset.namedRows = _.map(dataset.rows.slice(), (row)=> {
+      var output = Object.create(null);
+      _.forEach(row, (cell, cellIndex)=> {
+        var column = _.find(columns, {dataIndex, cellIndex});
+        output[column.text] = cell;
+      });
+      return output;
+    });
+  });
 }
 
 function transformDataToTable(data, panel) {

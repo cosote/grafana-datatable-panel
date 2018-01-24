@@ -89,6 +89,12 @@
 					tooltip="Highlights row on hover (Requires Page Reload on toggle)"
 					checked="ctrl.panel.hoverEnabled" on-change="ctrl.render()"></gf-form-switch>
 			</div>
+			<div class="gf-form-inline">
+				<gf-form-switch class="gf-form" label-class="width-11"
+					label="Exclude Ungrouped"
+					tooltip="Exclude rows that have unmatched siblings across datasets"
+					checked="ctrl.panel.excludeUngrouped" on-change="ctrl.render()"></gf-form-switch>
+			</div>
 		</div>
 
 	</div>

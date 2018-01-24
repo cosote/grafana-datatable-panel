@@ -6,7 +6,7 @@
       <div class="gf-form" ng-repeat="group in ctrl.dataRaw">
       	<label class="gf-form-label">
       		<span>Dataset #{{$index + 1}}: </span>
-	        <select class="gf-form-input" ng-model="group.grouping" ng-options="v.text as v.text for (k, v) in group.columns" ng-change="ctrl.groupingChanged()"></select>
+	        <select class="gf-form-input" ng-model="ctrl.panel.groupings[$index]" ng-options="v.text as v.text for (k, v) in group.columns" ng-change="ctrl.optionsChanged()"></select>
       	</label>
       </div>
     </div>

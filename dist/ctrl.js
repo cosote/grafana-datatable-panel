@@ -117,6 +117,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
           thresholds: []
         }],
         columns: [],
+        groupings: [],
         scroll: false,
         scrollHeight: 'default',
         fontSize: '100%',
@@ -135,6 +136,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         showCellBorders: false,
         showRowBorders: true,
         hoverEnabled: true,
+        excludeUngrouped: true,
         orderColumnEnabled: true,
         compactRowsEnabled: false,
         stripedRowsEnabled: true,
@@ -483,13 +485,11 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         }, {
           key: 'themeChanged',
           value: function themeChanged() {
-            //console.log(this.panel.datatableTheme);
             this.render();
           }
         }, {
-          key: 'groupingChanged',
-          value: function groupingChanged() {
-            debugger;
+          key: 'optionsChanged',
+          value: function optionsChanged() {
             this.render();
           }
         }, {
