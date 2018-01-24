@@ -78,7 +78,7 @@
 					<div class="gf-form-select-wrapper width-20">
 						<select class="gf-form-input"
 						  ng-model="column.name"
-							ng-options="c.value as c.text for c in ctrl.panel.columns">
+							ng-options="c.text as c.text for c in ctrl.panel.columns">
 						</select>
 					</div>
 					<label class="gf-form-label width-10">Width (px or %)</label>
@@ -87,7 +87,7 @@
 						ng-model="column.width"
 						spellcheck="false"
 						ng-model-onblur
-						ng-change="ctrl.columnWidthHintsChanged()">
+						ng-change="ctrl.optionsChanged()">
 					<label class="gf-form-label">
 						<i class="pointer fa fa-trash" ng-click="ctrl.removeColumnWidthHint(column)"></i>
 					</label>

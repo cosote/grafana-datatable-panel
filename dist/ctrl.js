@@ -119,6 +119,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         columns: [],
         groupings: [],
         columnAliases: [],
+        columnWidthHints: [],
         scroll: false,
         scrollHeight: 'default',
         fontSize: '100%',
@@ -554,6 +555,11 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             this.panel.styles.push(angular.copy(columnStyleDefaults));
           }
         }, {
+          key: 'removeColumnStyle',
+          value: function removeColumnStyle(style) {
+            this.panel.styles = _.without(this.panel.styles, style);
+          }
+        }, {
           key: 'addColumnAlias',
           value: function addColumnAlias() {
             var columnAlias = { name: '', alias: '' };
@@ -565,9 +571,15 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             this.panel.columnAliases = _.without(this.panel.columnAliases, alias);
           }
         }, {
-          key: 'removeColumnStyle',
-          value: function removeColumnStyle(style) {
-            this.panel.styles = _.without(this.panel.styles, style);
+          key: 'addColumnWidthHint',
+          value: function addColumnWidthHint() {
+            var columnWidthHint = { name: '', width: '' };
+            this.panel.columnWidthHints.push(columnWidthHint);
+          }
+        }, {
+          key: 'removeColumnWidthHint',
+          value: function removeColumnWidthHint(hint) {
+            this.panel.columnWidthHints = _.without(this.panel.columnWidthHints, hint);
           }
         }, {
           key: 'setUnitFormat',
