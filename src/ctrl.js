@@ -241,13 +241,17 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
         return col.text;
       });
     };
-
     if (this.panel.styles === void 0) {
       this.panel.styles = this.panel.columns;
       this.panel.columns = this.panel.fields;
       delete this.panel.columns;
       delete this.panel.fields;
     }
+    _.forEach(this.panel.customColumns, (custom)=> {
+      var index = _.findIndex(this.panel.columns, custom);
+      if (index !== -1) 
+        this.panel.columns[index] = custom;
+    });
     _.defaults(this.panel, panelDefaults);
 
     System.config({

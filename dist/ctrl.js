@@ -251,13 +251,16 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
               return col.text;
             });
           };
-
           if (_this2.panel.styles === void 0) {
             _this2.panel.styles = _this2.panel.columns;
             _this2.panel.columns = _this2.panel.fields;
             delete _this2.panel.columns;
             delete _this2.panel.fields;
           }
+          _.forEach(_this2.panel.customColumns, function (custom) {
+            var index = _.findIndex(_this2.panel.columns, custom);
+            if (index !== -1) _this2.panel.columns[index] = custom;
+          });
           _.defaults(_this2.panel, panelDefaults);
 
           System.config({
