@@ -126,7 +126,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         scrollHeight: 'default',
         fontSize: '100%',
         sort: {
-          col: 2,
+          col: 0,
           desc: true
         },
         datatableTheme: 'basic_theme',
