@@ -86,6 +86,7 @@ const panelDefaults = {
   groupings: [],
   columnAliases: [],
   columnWidthHints: [],
+  columnSortingRules: [],
   customColumns: [],
   scroll: false,
   scrollHeight: 'default',
@@ -177,6 +178,10 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
 
     this.addColumnSegment = uiSegmentSrv.newPlusButton();
     this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
+    this.columnSortMethods = [
+      {text:'Descending', value:'desc'},
+      {text:'Ascending', value:'asc'}
+    ];
     this.colorModes = [
       {
         text: 'Disabled',
@@ -563,6 +568,15 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
 
   removeColumnWidthHint(hint) {
     this.panel.columnWidthHints = _.without(this.panel.columnWidthHints, hint);
+  }
+
+  addColumnSortingRule() {
+    var columnSortingRule = {name:'', sort:''};
+    this.panel.columnSortingRules.push(columnSortingRule);
+  }
+
+  removeColumnSortingRule(rule) {
+    this.panel.columnSortingRules = _.without(this.panel.columnSortingRules, rule);
   }
   setUnitFormat(column, subItem) {
     column.unit = subItem.value;

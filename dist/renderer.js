@@ -467,7 +467,11 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
               // shift the data to the right
             }
             var panelHeight = this.panel.panelHeight;
-            var orderSetting = this.panel.sortByColumnsData;
+            var orderSetting = _.map(this.panel.columnSortingRules, function (_ref) {
+              var name = _ref.name,
+                  sort = _ref.sort;
+              return [_.findIndex(srcColumns, { text: name }), sort];
+            });
             //if (this.panel.rowNumbersEnabled) {
             //  // when row numbers are enabled, show them ascending
             //  orderSetting = [[0, 'asc']];

@@ -120,12 +120,13 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         groupings: [],
         columnAliases: [],
         columnWidthHints: [],
+        columnSortingRules: [],
         customColumns: [],
         scroll: false,
         scrollHeight: 'default',
         fontSize: '100%',
         sort: {
-          col: 0,
+          col: 2,
           desc: true
         },
         datatableTheme: 'basic_theme',
@@ -202,6 +203,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
 
           _this2.addColumnSegment = uiSegmentSrv.newPlusButton();
           _this2.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
+          _this2.columnSortMethods = [{ text: 'Descending', value: 'desc' }, { text: 'Ascending', value: 'asc' }];
           _this2.colorModes = [{
             text: 'Disabled',
             value: null
@@ -594,6 +596,17 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
           key: 'removeColumnWidthHint',
           value: function removeColumnWidthHint(hint) {
             this.panel.columnWidthHints = _.without(this.panel.columnWidthHints, hint);
+          }
+        }, {
+          key: 'addColumnSortingRule',
+          value: function addColumnSortingRule() {
+            var columnSortingRule = { name: '', sort: '' };
+            this.panel.columnSortingRules.push(columnSortingRule);
+          }
+        }, {
+          key: 'removeColumnSortingRule',
+          value: function removeColumnSortingRule(rule) {
+            this.panel.columnSortingRules = _.without(this.panel.columnSortingRules, rule);
           }
         }, {
           key: 'setUnitFormat',

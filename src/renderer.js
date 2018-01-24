@@ -456,7 +456,7 @@ export class DatatableRenderer {
       // shift the data to the right
     }
     var panelHeight = this.panel.panelHeight;
-    let orderSetting = this.panel.sortByColumnsData;
+    let orderSetting = _.map(this.panel.columnSortingRules, ({name, sort})=> [_.findIndex(srcColumns, {text:name}), sort]);
     //if (this.panel.rowNumbersEnabled) {
     //  // when row numbers are enabled, show them ascending
     //  orderSetting = [[0, 'asc']];
