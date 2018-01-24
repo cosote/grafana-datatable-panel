@@ -118,6 +118,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         }],
         columns: [],
         groupings: [],
+        columnAliases: [],
         scroll: false,
         scrollHeight: 'default',
         fontSize: '100%',
@@ -551,6 +552,17 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
               thresholds: []
             };
             this.panel.styles.push(angular.copy(columnStyleDefaults));
+          }
+        }, {
+          key: 'addColumnAlias',
+          value: function addColumnAlias() {
+            var columnAlias = { name: '', alias: '' };
+            this.panel.columnAliases.push(columnAlias);
+          }
+        }, {
+          key: 'removeColumnAlias',
+          value: function removeColumnAlias(alias) {
+            this.panel.columnAliases = _.without(this.panel.columnAliases, alias);
           }
         }, {
           key: 'removeColumnStyle',

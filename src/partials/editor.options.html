@@ -42,8 +42,9 @@
 					<label class="gf-form-label width-10">Column Name</label>
 					<div class="gf-form-select-wrapper width-20">
 						<select class="gf-form-input"
-						  ng-model="column.name"
-							ng-options="c.value as c.text for c in ctrl.panel.columns">
+							ng-model="column.name"
+							ng-change="ctrl.optionsChanged()"
+							ng-options="c.text as c.text for c in ctrl.panel.columns">
 						</select>
 					</div>
 					<label class="gf-form-label width-6">Alias</label>
@@ -52,7 +53,7 @@
 						ng-model="column.alias"
 						spellcheck="false"
 						ng-model-onblur
-						ng-change="ctrl.columnAliasChanged()">
+						ng-change="ctrl.optionsChanged()">
 					<label class="gf-form-label">
 						<i class="pointer fa fa-trash" ng-click="ctrl.removeColumnAlias(column)"></i>
 					</label>

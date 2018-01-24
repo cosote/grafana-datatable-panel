@@ -84,6 +84,7 @@ const panelDefaults = {
     ],
   columns: [],
   groupings: [],
+  columnAliases: [],
   scroll: false,
   scrollHeight: 'default',
   fontSize: '100%',
@@ -527,6 +528,16 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
       };
       this.panel.styles.push(angular.copy(columnStyleDefaults));
   }
+
+  addColumnAlias() {
+    var columnAlias = {name:'', alias:''};
+    this.panel.columnAliases.push(columnAlias);
+  }
+
+  removeColumnAlias(alias) {
+    this.panel.columnAliases = _.without(this.panel.columnAliases, alias);
+  }
+
   removeColumnStyle(style) {
     this.panel.styles = _.without(this.panel.styles, style);
   }
