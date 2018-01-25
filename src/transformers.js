@@ -250,7 +250,7 @@ function extractRows(data, panel, model) {
     var outputRow = [];
     if (panel.excludeUngrouped && allHaveGrouping)
       if (data.some((dataset)=> row[dataset.grouping] !== null))
-        return
+        return;
     
     _.forEach(columns, (column)=> {
       var value = row[column.text];

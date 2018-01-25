@@ -35,10 +35,12 @@ System.register(['lodash', 'moment', './libs/fast-memoize/src/index.js', 'app/co
 
     _.forEach(_.values(mapping), function (row) {
       var outputRow = [];
-      if (panel.excludeUngrouped && Object.keys(row).length < columns.length - customColumns.length) return;
+      if (panel.excludeUngrouped && allHaveGrouping) if (data.some(function (dataset) {
+        return row[dataset.grouping] !== null;
+      })) return;
+
       _.forEach(columns, function (column) {
         var value = row[column.text];
-        // if (column.script) value = column.script;
         if (column.script) value = evalRowScript(row, column.script, model.columns);
         if (typeof value === 'undefined') value = null;
         outputRow.push(value);
