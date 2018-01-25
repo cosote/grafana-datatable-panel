@@ -248,10 +248,12 @@ function extractRows(data, panel, model) {
 
   _.forEach(_.values(mapping), (row)=> {
     var outputRow = [];
-    if (panel.excludeUngrouped && Object.keys(row).length < columns.length - customColumns.length) return;
+    if (panel.excludeUngrouped && allHaveGrouping)
+      if (data.some((dataset)=> row[dataset.grouping] !== null))
+        return
+    
     _.forEach(columns, (column)=> {
       var value = row[column.text];
-      // if (column.script) value = column.script;
       if (column.script) value = evalRowScript(row, column.script, model.columns);
       if (typeof value === 'undefined') value = null;
       outputRow.push(value);
