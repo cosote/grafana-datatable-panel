@@ -249,7 +249,7 @@ function extractRows(data, panel, model) {
   _.forEach(_.values(mapping), (row)=> {
     var outputRow = [];
     if (panel.excludeUngrouped && allHaveGrouping)
-      if (data.some((dataset)=> row[dataset.grouping] !== null))
+      if (data.some((dataset)=> row[dataset.grouping] == null))
         return;
     
     _.forEach(columns, (column)=> {

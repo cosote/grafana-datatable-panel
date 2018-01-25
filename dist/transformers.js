@@ -36,7 +36,7 @@ System.register(['lodash', 'moment', './libs/fast-memoize/src/index.js', 'app/co
     _.forEach(_.values(mapping), function (row) {
       var outputRow = [];
       if (panel.excludeUngrouped && allHaveGrouping) if (data.some(function (dataset) {
-        return row[dataset.grouping] !== null;
+        return row[dataset.grouping] == null;
       })) return;
 
       _.forEach(columns, function (column) {
