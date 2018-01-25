@@ -175,7 +175,7 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
     this.annotationsSrv = annotationsSrv;
     this.uiSegmentSrv = uiSegmentSrv;
     // editor
-
+    this.hide = {};
     this.addColumnSegment = uiSegmentSrv.newPlusButton();
     this.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
     this.columnSortMethods = [

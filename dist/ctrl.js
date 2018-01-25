@@ -200,7 +200,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
           _this2.annotationsSrv = annotationsSrv;
           _this2.uiSegmentSrv = uiSegmentSrv;
           // editor
-
+          _this2.hide = {};
           _this2.addColumnSegment = uiSegmentSrv.newPlusButton();
           _this2.fontSizes = ['80%', '90%', '100%', '110%', '120%', '130%', '150%', '160%', '180%', '200%', '220%', '250%'];
           _this2.columnSortMethods = [{ text: 'Descending', value: 'desc' }, { text: 'Ascending', value: 'asc' }];
