@@ -401,7 +401,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
                     column.dataIndex = index;
                     column.cellIndex = columnIndex;
                     if (_this3.dataRaw.length) {
-                      column.text = index + '.' + column.text;
+                      column.text = (model.alias || index) + '.' + column.text;
                     }
                   });
                 });

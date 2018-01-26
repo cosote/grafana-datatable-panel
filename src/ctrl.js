@@ -390,7 +390,7 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
             column.dataIndex = index;
             column.cellIndex = columnIndex;
             if (this.dataRaw.length) {
-              column.text = `${index}.${column.text}`;
+              column.text = `${model.alias || index}.${column.text}`;
             }
           });
         });
