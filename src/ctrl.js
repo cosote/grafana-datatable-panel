@@ -107,6 +107,7 @@ const panelDefaults = {
   showRowBorders: true,
   hoverEnabled: true,
   excludeUngrouped: true,
+  baseGrouping: null,
   orderColumnEnabled: true,
   compactRowsEnabled: false,
   stripedRowsEnabled: true,
@@ -588,6 +589,11 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
     ref[0] = ref[2];
     ref[2] = copy;
     this.render();
+  }
+
+  needsBaseGrouping() {
+    var allHaveGrouping = _.every(this.dataRaw, (dataset)=> dataset.grouping);
+    return allHaveGrouping && !this.panel.excludeUngrouped;
   }
 }
 DatatablePanelCtrl.templateUrl = 'partials/template.html';

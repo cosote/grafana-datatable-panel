@@ -248,13 +248,17 @@ function extractRows(data, panel, model) {
 
   _.forEach(_.values(mapping), (row)=> {
     var outputRow = [];
-    if (panel.excludeUngrouped && allHaveGrouping)
-      if (data.some((dataset)=> row[dataset.grouping] == null))
-        return;
+    if (allHaveGrouping)
+      if (panel.excludeUngrouped) {
+        if (data.some((dataset)=> row[dataset.grouping] == null)) return;
+      } else if (panel.baseGrouping) {
+        if (row[panel.baseGrouping] == null) return;
+      }
     
     _.forEach(columns, (column)=> {
       var value = row[column.text];
       if (column.script) value = evalRowScript(row, column.script, model.columns);
+      if (typeof value === 'number' && isNaN(value)) value = null;
       if (typeof value === 'undefined') value = null;
       outputRow.push(value);
     });

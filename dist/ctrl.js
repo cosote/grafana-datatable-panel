@@ -141,6 +141,7 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
         showRowBorders: true,
         hoverEnabled: true,
         excludeUngrouped: true,
+        baseGrouping: null,
         orderColumnEnabled: true,
         compactRowsEnabled: false,
         stripedRowsEnabled: true,
@@ -622,6 +623,14 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
             ref[0] = ref[2];
             ref[2] = copy;
             this.render();
+          }
+        }, {
+          key: 'needsBaseGrouping',
+          value: function needsBaseGrouping() {
+            var allHaveGrouping = _.every(this.dataRaw, function (dataset) {
+              return dataset.grouping;
+            });
+            return allHaveGrouping && !this.panel.excludeUngrouped;
           }
         }]);
 
