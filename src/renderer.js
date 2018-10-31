@@ -310,6 +310,10 @@ export class DatatableRenderer {
     for (let i = 0; i < srcColumns.length; i++) {
       var columnAlias = this.getColumnAlias(srcColumns[i].text);
       var columnWidthHint = this.getColumnWidthHint(srcColumns[i].text);
+      var columnClassName = 'dt-left';
+      if (srcColumns[i].type == 'number'){
+        columnClassName = 'dt-right'; // any reason not to align numbers right?
+      }
       // NOTE: the width below is a "hint" and will be overridden as needed, this lets most tables show timestamps
       // with full width
       /* jshint loopfunc: true */
@@ -317,6 +321,7 @@ export class DatatableRenderer {
         title: columnAlias,
         type: srcColumns[i].type,
         width: columnWidthHint,
+        className: columnClassName,
       });
         columnDefs.push(
           {
