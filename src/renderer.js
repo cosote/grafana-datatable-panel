@@ -475,6 +475,7 @@ export class DatatableRenderer {
       scrollCollapse: false,
       scrollX: true,
       stateSave: true,
+      mark: true,
       dom: 'Bfrtip',
       buttons: [
         'copy', 'excel', 'csv', 'pdf', 'print'

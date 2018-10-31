@@ -266,8 +266,14 @@ export class DatatablePanelCtrl extends MetricsPanelCtrl {
             "datatables.net-bs" : this.getPanelPath() + "libs/datatables.net-bs/js/dataTables.bootstrap.min",
             "datatables.net-jqui" : this.getPanelPath() + "libs/datatables.net-jqui/js/dataTables.jqueryui.min",
             "datatables.net-zf" : this.getPanelPath() + "libs/datatables.net-zf/js/dataTables.foundation.min",
+            "markjs" : this.getPanelPath() + "libs/mark.js/dist/jquery.mark.js",
+            "datatables-markjs" : this.getPanelPath() + "libs/datatables.mark.js/dist/datatables.mark.js",
         }
     });
+
+    // enable datatables marking/highlighting function when searching
+    System.import('markjs');
+    System.import('datatables-markjs');
 
     // basic datatables theme
     // alternative themes are disabled since they affect all datatable panels on same page currently
