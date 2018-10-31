@@ -105,6 +105,8 @@ module.exports = function(grunt) {
           'datatables.net-select-dt/**',
           'datatables.net-select-jqui/**',
           'datatables.net-select-zf/**',
+          'datatables.mark.js/**',
+          'mark.js/**',
           'fastclick/**',
           'fast-memoize/**',
           'font-awesome/**',
