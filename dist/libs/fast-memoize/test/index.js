@@ -88,8 +88,19 @@ test('memoize functions with spread arguments', () => {
   expect(memoizedMultiply(2, 4, 5, 6)).toEqual([8, 10, 12])
 })
 
+test('single arg primitive test', () => {
+  function kindOf (arg) {
+    return (arg && typeof arg === 'object' ? arg.constructor.name : typeof arg)
+  }
+
+  const memoizedKindOf = memoize(kindOf)
+
+  // Assertions
+  expect(memoizedKindOf(2)).toEqual('number')
+  expect(memoizedKindOf('2')).toEqual('string')
+})
+
 test('inject custom cache', () => {
-  let hasMethodExecutionCount = 0
   let setMethodExecutionCount = 0
 
   // a custom cache instance must implement:
@@ -99,7 +110,6 @@ test('inject custom cache', () => {
   // - delete
   const customCacheProto = {
     has (key) {
-      hasMethodExecutionCount++
       return (key in this.cache)
     },
     get (key) {
@@ -131,9 +141,6 @@ test('inject custom cache', () => {
   memoizedMinus(3, 1)
   memoizedMinus(3, 1)
 
-  // Assertions
-
-  expect(hasMethodExecutionCount).toBe(2)
   expect(setMethodExecutionCount).toBe(1)
 })
 

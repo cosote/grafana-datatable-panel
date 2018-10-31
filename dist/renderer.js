@@ -324,13 +324,18 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
             for (var i = 0; i < srcColumns.length; i++) {
               var columnAlias = this.getColumnAlias(srcColumns[i].text);
               var columnWidthHint = this.getColumnWidthHint(srcColumns[i].text);
+              var columnClassName = 'dt-left';
+              if (srcColumns[i].type == 'number') {
+                columnClassName = 'dt-right'; // any reason not to align numbers right?
+              }
               // NOTE: the width below is a "hint" and will be overridden as needed, this lets most tables show timestamps
               // with full width
               /* jshint loopfunc: true */
               columns.push({
                 title: columnAlias,
-                type: srcColumns[i].type,
-                width: columnWidthHint
+                //type: srcColumns[i].type, /* fix sorting of numbers by simply disable datatables column type and fall back to default... might break date sorting... */
+                width: columnWidthHint,
+                className: columnClassName
               });
               columnDefs.push({
                 "targets": i + rowNumberOffset,
@@ -485,6 +490,7 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
               scrollCollapse: false,
               scrollX: true,
               stateSave: true,
+              mark: true,
               dom: 'Bfrtip',
               buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
               select: {

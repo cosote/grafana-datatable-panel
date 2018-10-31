@@ -1,8 +1,8 @@
 <img src="http://rawgit.com/caiogondim/fast-memoize/master/img/icon.svg" width="100%" />
 
-<h1 align="center">fast-memoize.js</h1>
+# fast-memoize
 
-<div align="center">
+<div>
   <img src="http://travis-ci.org/caiogondim/fast-memoize.js.svg?branch=master" alt="Travis CI"> <img src="http://img.badgesize.io/caiogondim/fast-memoize.js/master/src/index.js?compression=gzip"> <img src="https://codecov.io/gh/caiogondim/fast-memoize.js/branch/master/graph/badge.svg" alt="Code coverage"> <a href="https://www.npmjs.com/package/fast-memoize"><img src="https://img.shields.io/npm/v/fast-memoize.svg" /></a>
 </div>
 
@@ -16,16 +16,9 @@ JavaScript that supports *N* arguments**.
 
 ## Installation
 
-To use the library, install it through [npm](https://npmjs.com)
-
 ```shell
 npm install fast-memoize --save
 ```
-
-To port it to Browser or any other (non CJS) environment, use your favorite CJS
-bundler. No favorite yet? Try: [Browserify](http://browserify.org/),
-[Webmake](https://github.com/medikoo/modules-webmake) or
-[Webpack](http://webpack.github.io/)
 
 ## Usage
 
@@ -60,7 +53,8 @@ const memoized = memoize(fn, {
 })
 ```
 
-The custom cache should be an object containing a `create` method that returns an object implementing the following methods:
+The custom cache should be an object containing a `create` method that returns
+an object implementing the following methods:
 - `get`
 - `set`
 - `has`
@@ -111,8 +105,9 @@ npm run benchmark:compare 53fa9a62214e816cf8b5b4fa291c38f1d63677b9
 
 #### Spread arguments
 
-We check for `function.length` to get upfront the expected number of arguments in order to use
-the fastest strategy. But with spread arguments we don't receive the right number.
+We check for `function.length` to get upfront the expected number of arguments
+in order to use the fastest strategy. But with spread arguments we don't receive
+the right number.
 
 ```js
 function multiply (multiplier, ...theArgs) {
@@ -128,6 +123,34 @@ So if you use spread arguments, explicitly set the strategy to variadic.
 ```js
 const memoizedMultiply = memoize(multiply, {
   strategy: memoize.strategies.variadic
+})
+```
+
+#### Function Arguments
+
+The default serializer uses `JSON.stringify` which will serialize functions as
+`null`. This means that if you are passing any functions as arguments you will
+get the same output regardless of whether you pass in different functions or
+indeed no function at all. The cache key generated will always be the same. To
+get around this you can give each function a unique ID and use that.
+
+```js
+let id = 0
+function memoizedId(x) {
+  if (!x.__memoizedId) x.__memoizedId = ++id
+  return { __memoizedId: x.__memoizedId }
+}
+
+memoize((aFunction, foo) => {
+  return aFunction.bind(foo)
+}, {
+  serializer: args => {
+    const argumentsWithFuncIds = Array.from(args).map(x => {
+      if (typeof x === 'function') return memoizedId(x)
+      return x
+    })
+    return JSON.stringify(argumentsWithFuncIds)
+  }
 })
 ```
 

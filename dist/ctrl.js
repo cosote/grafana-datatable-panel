@@ -271,9 +271,15 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
               "datatables.net": _this2.getPanelPath() + "libs/datatables.net/js/jquery.dataTables.min",
               "datatables.net-bs": _this2.getPanelPath() + "libs/datatables.net-bs/js/dataTables.bootstrap.min",
               "datatables.net-jqui": _this2.getPanelPath() + "libs/datatables.net-jqui/js/dataTables.jqueryui.min",
-              "datatables.net-zf": _this2.getPanelPath() + "libs/datatables.net-zf/js/dataTables.foundation.min"
+              "datatables.net-zf": _this2.getPanelPath() + "libs/datatables.net-zf/js/dataTables.foundation.min",
+              "markjs": _this2.getPanelPath() + "libs/mark.js/dist/jquery.mark.js",
+              "datatables-markjs": _this2.getPanelPath() + "libs/datatables.mark.js/dist/datatables.mark.js"
             }
           });
+
+          // enable datatables marking/highlighting function when searching
+          System.import('markjs');
+          System.import('datatables-markjs');
 
           // basic datatables theme
           // alternative themes are disabled since they affect all datatable panels on same page currently
@@ -401,8 +407,8 @@ System.register(['app/plugins/sdk', 'jquery', 'angular', 'app/core/utils/kbn', '
                   model.columns.forEach(function (column, columnIndex) {
                     column.dataIndex = index;
                     column.cellIndex = columnIndex;
-                    if (_this3.dataRaw.length) {
-                      column.text = (model.alias || index) + '.' + column.text;
+                    if (_this3.dataRaw.length && model.alias) {
+                      column.text = model.alias + '.' + column.text;
                     }
                   });
                 });

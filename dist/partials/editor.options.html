@@ -71,7 +71,7 @@
                 <div class="gf-form">
                     <label class="gf-form-label width-8">Column Name</label>
                     <div class="gf-form-select-wrapper width-10">
-                        <select class="gf-form-input" ng-model="column.name" ng-change="ctrl.optionsChanged()" ng-options="c.text as c.text for c in ctrl.panel.columns">
+                        <select class="gf-form-input" ng-model="column.name" ng-change="ctrl.optionsChanged()" ng-options="c.text as c.text for c in ctrl.table.columns">
                         </select>
                     </div>
                     <label class="gf-form-label width-5">Alias</label>
@@ -97,7 +97,7 @@
                 <div class="gf-form">
                     <label class="gf-form-label width-8">Column Name</label>
                     <div class="gf-form-select-wrapper width-10">
-                        <select class="gf-form-input" ng-model="column.name" ng-options="c.text as c.text for c in ctrl.panel.columns">
+                        <select class="gf-form-input" ng-model="column.name" ng-options="c.text as c.text for c in ctrl.table.columns">
                         </select>
                     </div>
                     <label class="gf-form-label width-8">Width (px or %)</label>
