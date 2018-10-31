@@ -319,7 +319,7 @@ export class DatatableRenderer {
       /* jshint loopfunc: true */
       columns.push({
         title: columnAlias,
-        type: srcColumns[i].type,
+        //type: srcColumns[i].type, /* fix sorting of numbers by simply disable datatables column type and fall back to default... might break date sorting... */
         width: columnWidthHint,
         className: columnClassName,
       });
