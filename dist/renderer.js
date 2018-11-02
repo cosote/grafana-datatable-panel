@@ -136,7 +136,6 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
               };
             }
             if (style.type === 'number') {
-              var valueFormatter = kbn.valueFormats[column.unit || style.unit];
               return function (v) {
                 if (v === null || v === void 0) {
                   return '-';
@@ -147,7 +146,13 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
                 if (style.colorMode) {
                   _this2.colorState[style.colorMode] = _this2.getColorForValue(v, style);
                 }
-                return valueFormatter(v, style.decimals, null);
+                // always return objet for numbers, so sorting works
+                var valueFormatter = kbn.valueFormats[column.unit || style.unit];
+                // return object for numbers: "d" is default display text and "#" represents numeric value
+                return {
+                  "d": valueFormatter(v, style.decimals, null),
+                  "#": v
+                };
               };
             }
             return function (value) {
@@ -324,18 +329,27 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
             for (var i = 0; i < srcColumns.length; i++) {
               var columnAlias = this.getColumnAlias(srcColumns[i].text);
               var columnWidthHint = this.getColumnWidthHint(srcColumns[i].text);
+              var columnType = srcColumns[i].type;
               var columnClassName = 'dt-left';
-              if (srcColumns[i].type == 'number') {
+              var columnRender = undefined;
+              if (columnType == 'number') {
+                //columnType = 'num-fmt';
                 columnClassName = 'dt-right'; // any reason not to align numbers right?
+                // use object for numbers: "d" is default display text and "#" represents numeric value
+                columnRender = {
+                  "_": "d",
+                  "sort": "#"
+                };
               }
               // NOTE: the width below is a "hint" and will be overridden as needed, this lets most tables show timestamps
               // with full width
               /* jshint loopfunc: true */
               columns.push({
                 title: columnAlias,
-                //type: srcColumns[i].type, /* fix sorting of numbers by simply disable datatables column type and fall back to default... might break date sorting... */
+                type: columnType,
                 width: columnWidthHint,
-                className: columnClassName
+                className: columnClassName,
+                render: columnRender
               });
               columnDefs.push({
                 "targets": i + rowNumberOffset,
