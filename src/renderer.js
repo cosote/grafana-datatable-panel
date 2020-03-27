@@ -568,7 +568,7 @@ export class DatatableRenderer {
         let row = this.table.rows[y];
         let new_row = [];
         for (var i = 0; i < columns.length; i++) {
-          new_row.push(this.formatColumnValue(i, row[i]));
+          new_row.push(this.formatColumnValue(i, row[i]).toString());
         }
         rows.push(new_row);
       }

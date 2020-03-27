@@ -582,7 +582,7 @@ System.register(['lodash', 'jquery', 'app/core/utils/kbn', 'moment', './libs/dat
               var row = this.table.rows[y];
               var new_row = [];
               for (var i = 0; i < columns.length; i++) {
-                new_row.push(this.formatColumnValue(i, row[i]));
+                new_row.push(this.formatColumnValue(i, row[i]).toString());
               }
               rows.push(new_row);
             }
